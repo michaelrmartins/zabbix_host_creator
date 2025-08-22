@@ -66,3 +66,18 @@
 2025-08-22 10:08:47,996 - INFO - 192.168.55.9 - - [22/Aug/2025 10:08:47] "GET /api/groups HTTP/1.1" 200 -
 2025-08-22 10:09:44,286 - INFO - Successfully authenticated with Zabbix
 2025-08-22 10:09:44,287 - INFO - 192.168.55.9 - - [22/Aug/2025 10:09:44] "GET /api/test_connection HTTP/1.1" 200 -
+2025-08-22 10:33:05,289 - INFO - Starting Zabbix Host Creator on 0.0.0.0:5000
+2025-08-22 10:33:05,291 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.199:5000
+2025-08-22 10:33:05,292 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-22 10:33:10,493 - INFO - 192.168.55.9 - - [22/Aug/2025 10:33:10] "GET / HTTP/1.1" 200 -
+2025-08-22 10:33:10,845 - INFO - Successfully authenticated with Zabbix
+2025-08-22 10:33:10,846 - INFO - Successfully authenticated with Zabbix
+2025-08-22 10:33:10,850 - INFO - 192.168.55.9 - - [22/Aug/2025 10:33:10] "GET /api/test_connection HTTP/1.1" 200 -
+2025-08-22 10:33:10,866 - INFO - 192.168.55.9 - - [22/Aug/2025 10:33:10] "GET /api/groups HTTP/1.1" 200 -
+2025-08-22 11:25:03,665 - INFO - 192.168.55.9 - - [22/Aug/2025 11:25:03] "GET / HTTP/1.1" 200 -
+2025-08-22 11:25:03,762 - INFO - 192.168.55.9 - - [22/Aug/2025 11:25:03] "GET /api/groups HTTP/1.1" 200 -
+2025-08-22 11:25:03,858 - INFO - Successfully authenticated with Zabbix
+2025-08-22 11:25:03,859 - INFO - 192.168.55.9 - - [22/Aug/2025 11:25:03] "GET /api/test_connection HTTP/1.1" 200 -

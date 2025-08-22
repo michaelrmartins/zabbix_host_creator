@@ -187,16 +187,24 @@ class ZabbixAPI:
             logger.error(f"Exception creating host {hostname}: {str(e)}")
             return False, f"Exception creating host {hostname}: {str(e)}"
     
-    def create_multiple_hosts(self, base_hostname, ip_list, group_id):
+    def create_multiple_hosts(self, base_hostname, ip_list, group_id, use_ip_as_hostname=False):
         """Create multiple hosts from IP list"""
         results = []
         
         for i, ip in enumerate(ip_list, 1):
-            hostname = f"{base_hostname}-{i:02d}"
-            success, message = self.create_host(hostname, ip.strip(), group_id)
+            ip_clean = ip.strip()
+            
+            if use_ip_as_hostname:
+                # Use IP address as hostname directly (Zabbix 7.0 supports dots in hostnames)
+                hostname = ip_clean
+            else:
+                # Use base hostname with sequential numbering
+                hostname = f"{base_hostname}-{i:02d}"
+            
+            success, message = self.create_host(hostname, ip_clean, group_id)
             results.append({
                 'hostname': hostname,
-                'ip': ip.strip(),
+                'ip': ip_clean,
                 'success': success,
                 'message': message
             })
@@ -223,9 +231,12 @@ def create_hosts():
     try:
         data = request.get_json()
         
-        # Validate input
-        if not data.get('base_hostname'):
-            return jsonify({'error': 'Base hostname is required'}), 400
+        # Check if using IP as hostname
+        use_ip_as_hostname = data.get('use_ip_as_hostname', False)
+        
+        # Validate input based on mode
+        if not use_ip_as_hostname and not data.get('base_hostname'):
+            return jsonify({'error': 'Base hostname is required when not using IP as hostname'}), 400
         
         if not data.get('ip_list'):
             return jsonify({'error': 'IP list is required'}), 400
@@ -241,9 +252,10 @@ def create_hosts():
         
         # Create hosts
         results = zabbix_api.create_multiple_hosts(
-            data['base_hostname'],
+            data.get('base_hostname', ''),
             ip_list,
-            data['group_id']
+            data['group_id'],
+            use_ip_as_hostname
         )
         
         return jsonify({
@@ -275,7 +287,7 @@ def datetime_filter(timestamp):
 if not os.path.exists('templates'):
     os.makedirs('templates')
 
-# HTML Template
+# HTML Template with Toggle Feature
 html_template = '''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -349,9 +361,65 @@ html_template = '''<!DOCTYPE html>
             border-color: #667eea;
         }
         
+        input[type="text"]:disabled {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+        
         textarea {
             resize: vertical;
             height: 120px;
+        }
+        
+        /* Toggle Switch Styles */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background-color: #ccc;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background-color: #667eea;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+        
+        .toggle-label {
+            font-size: 14px;
+            color: #666;
+            user-select: none;
+        }
+        
+        .toggle-switch.active + .toggle-label {
+            color: #667eea;
+            font-weight: 600;
         }
         
         .button-group {
@@ -497,7 +565,15 @@ html_template = '''<!DOCTYPE html>
             <div class="form-group">
                 <label for="base_hostname">Base Hostname:</label>
                 <input type="text" id="base_hostname" name="base_hostname" placeholder="e.g., Tplink" required>
-                <small style="color: #666; margin-top: 5px; display: block;">
+                
+                <div class="toggle-container">
+                    <div class="toggle-switch" id="ipToggle">
+                        <div class="toggle-slider"></div>
+                    </div>
+                    <span class="toggle-label">Use IP Address as Hostname</span>
+                </div>
+                
+                <small id="hostnameHelp" style="color: #666; margin-top: 5px; display: block;">
                     Hosts will be created as: Tplink-01, Tplink-02, etc.
                 </small>
             </div>
@@ -537,13 +613,37 @@ html_template = '''<!DOCTYPE html>
     </div>
 
     <script>
+        let useIpAsHostname = false;
+        
         document.addEventListener('DOMContentLoaded', function() {
             loadGroups();
             testConnection();
             
             document.getElementById('testBtn').addEventListener('click', testConnection);
             document.getElementById('hostForm').addEventListener('submit', createHosts);
+            document.getElementById('ipToggle').addEventListener('click', toggleHostnameMode);
         });
+        
+        function toggleHostnameMode() {
+            const toggle = document.getElementById('ipToggle');
+            const hostnameInput = document.getElementById('base_hostname');
+            const hostnameHelp = document.getElementById('hostnameHelp');
+            
+            useIpAsHostname = !useIpAsHostname;
+            
+            if (useIpAsHostname) {
+                toggle.classList.add('active');
+                hostnameInput.disabled = true;
+                hostnameInput.required = false;
+                hostnameInput.value = '';
+                hostnameHelp.textContent = 'Hosts will be created using IP addresses as hostnames (e.g., 192.168.1.1, 192.168.1.2)';
+            } else {
+                toggle.classList.remove('active');
+                hostnameInput.disabled = false;
+                hostnameInput.required = true;
+                hostnameHelp.textContent = 'Hosts will be created as: Tplink-01, Tplink-02, etc.';
+            }
+        }
         
         function showStatus(message, isError = false) {
             const status = document.getElementById('status');
@@ -612,7 +712,8 @@ html_template = '''<!DOCTYPE html>
             const data = {
                 base_hostname: formData.get('base_hostname'),
                 ip_list: formData.get('ip_list'),
-                group_id: formData.get('group_id')
+                group_id: formData.get('group_id'),
+                use_ip_as_hostname: useIpAsHostname
             };
             
             showSpinner(true);
