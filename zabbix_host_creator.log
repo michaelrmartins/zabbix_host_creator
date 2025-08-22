@@ -1,0 +1,68 @@
+2025-07-10 15:37:42,561 - INFO - Starting Zabbix Host Creator on 0.0.0.0:5000
+2025-07-10 15:37:42,571 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.199:5000
+2025-07-10 15:37:42,572 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 15:37:53,722 - INFO - 192.168.55.9 - - [10/Jul/2025 15:37:53] "GET / HTTP/1.1" 200 -
+2025-07-10 15:37:53,837 - INFO - 192.168.55.9 - - [10/Jul/2025 15:37:53] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-07-10 15:37:53,903 - INFO - Successfully authenticated with Zabbix
+2025-07-10 15:37:53,908 - INFO - Successfully authenticated with Zabbix
+2025-07-10 15:37:53,910 - INFO - 192.168.55.9 - - [10/Jul/2025 15:37:53] "GET /api/test_connection HTTP/1.1" 200 -
+2025-07-10 15:37:53,918 - INFO - 192.168.55.9 - - [10/Jul/2025 15:37:53] "GET /api/groups HTTP/1.1" 200 -
+2025-07-10 15:38:22,306 - INFO - Successfully authenticated with Zabbix
+2025-07-10 15:38:22,307 - INFO - 192.168.55.9 - - [10/Jul/2025 15:38:22] "GET /api/test_connection HTTP/1.1" 200 -
+2025-07-10 16:44:42,858 - INFO - Starting Zabbix Host Creator on 0.0.0.0:5000
+2025-07-10 16:44:42,860 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.199:5000
+2025-07-10 16:44:42,860 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 16:44:46,739 - INFO - 192.168.55.9 - - [10/Jul/2025 16:44:46] "GET / HTTP/1.1" 200 -
+2025-07-10 16:44:46,822 - ERROR - Authentication failed: {'code': -32602, 'message': 'Invalid params.', 'data': 'Invalid parameter "/": unexpected parameter "user".'}
+2025-07-10 16:44:46,823 - INFO - 192.168.55.9 - - [10/Jul/2025 16:44:46] "GET /api/groups HTTP/1.1" 200 -
+2025-07-10 16:44:46,823 - ERROR - Authentication failed: {'code': -32602, 'message': 'Invalid params.', 'data': 'Invalid parameter "/": unexpected parameter "user".'}
+2025-07-10 16:44:46,824 - INFO - 192.168.55.9 - - [10/Jul/2025 16:44:46] "GET /api/test_connection HTTP/1.1" 200 -
+2025-07-10 16:48:16,252 - INFO - Starting Zabbix Host Creator on 0.0.0.0:5000
+2025-07-10 16:48:16,254 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.199:5000
+2025-07-10 16:48:16,255 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-10 16:48:21,115 - INFO - 192.168.55.9 - - [10/Jul/2025 16:48:21] "GET / HTTP/1.1" 200 -
+2025-07-10 16:48:21,624 - INFO - Successfully authenticated with Zabbix
+2025-07-10 16:48:21,624 - INFO - 192.168.55.9 - - [10/Jul/2025 16:48:21] "GET /api/test_connection HTTP/1.1" 200 -
+2025-07-10 16:48:21,625 - INFO - Successfully authenticated with Zabbix
+2025-07-10 16:48:21,642 - INFO - 192.168.55.9 - - [10/Jul/2025 16:48:21] "GET /api/groups HTTP/1.1" 200 -
+2025-07-10 16:49:03,388 - INFO - 192.168.55.9 - - [10/Jul/2025 16:49:03] "GET / HTTP/1.1" 200 -
+2025-07-10 16:49:03,441 - INFO - 192.168.55.9 - - [10/Jul/2025 16:49:03] "GET /api/groups HTTP/1.1" 200 -
+2025-07-10 16:49:03,544 - INFO - Successfully authenticated with Zabbix
+2025-07-10 16:49:03,545 - INFO - 192.168.55.9 - - [10/Jul/2025 16:49:03] "GET /api/test_connection HTTP/1.1" 200 -
+2025-07-10 16:50:30,788 - INFO - Successfully created host Roteador TPLink-01 with ID 10902
+2025-07-10 16:50:30,825 - INFO - Successfully created host Roteador TPLink-02 with ID 10903
+2025-07-10 16:50:30,853 - INFO - Successfully created host Roteador TPLink-03 with ID 10904
+2025-07-10 16:50:30,881 - INFO - Successfully created host Roteador TPLink-04 with ID 10905
+2025-07-10 16:50:30,908 - INFO - Successfully created host Roteador TPLink-05 with ID 10906
+2025-07-10 16:50:30,938 - INFO - Successfully created host Roteador TPLink-06 with ID 10907
+2025-07-10 16:50:30,967 - INFO - Successfully created host Roteador TPLink-07 with ID 10908
+2025-07-10 16:50:30,997 - INFO - Successfully created host Roteador TPLink-08 with ID 10909
+2025-07-10 16:50:30,998 - INFO - 192.168.55.9 - - [10/Jul/2025 16:50:30] "POST /api/create_hosts HTTP/1.1" 200 -
+2025-07-10 19:37:20,024 - INFO - 192.168.190.30 - - [10/Jul/2025 19:37:20] "GET / HTTP/1.1" 200 -
+2025-07-10 19:37:20,136 - INFO - 192.168.190.30 - - [10/Jul/2025 19:37:20] "GET /api/groups HTTP/1.1" 200 -
+2025-07-10 19:37:20,191 - INFO - 192.168.190.30 - - [10/Jul/2025 19:37:20] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-07-10 19:37:20,263 - INFO - Successfully authenticated with Zabbix
+2025-07-10 19:37:20,264 - INFO - 192.168.190.30 - - [10/Jul/2025 19:37:20] "GET /api/test_connection HTTP/1.1" 200 -
+2025-08-22 10:08:41,376 - INFO - Starting Zabbix Host Creator on 0.0.0.0:5000
+2025-08-22 10:08:41,383 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.199:5000
+2025-08-22 10:08:41,383 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-22 10:08:47,671 - INFO - 192.168.55.9 - - [22/Aug/2025 10:08:47] "GET / HTTP/1.1" 200 -
+2025-08-22 10:08:47,782 - INFO - 192.168.55.9 - - [22/Aug/2025 10:08:47] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-08-22 10:08:47,973 - INFO - Successfully authenticated with Zabbix
+2025-08-22 10:08:47,974 - INFO - Successfully authenticated with Zabbix
+2025-08-22 10:08:47,977 - INFO - 192.168.55.9 - - [22/Aug/2025 10:08:47] "GET /api/test_connection HTTP/1.1" 200 -
+2025-08-22 10:08:47,996 - INFO - 192.168.55.9 - - [22/Aug/2025 10:08:47] "GET /api/groups HTTP/1.1" 200 -
+2025-08-22 10:09:44,286 - INFO - Successfully authenticated with Zabbix
+2025-08-22 10:09:44,287 - INFO - 192.168.55.9 - - [22/Aug/2025 10:09:44] "GET /api/test_connection HTTP/1.1" 200 -

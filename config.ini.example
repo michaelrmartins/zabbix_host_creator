@@ -1,0 +1,11 @@
+[zabbix]
+# Zabbix server configuration
+url = https://your-zabbix-server.com
+username = your-zabbix-username
+password = your-zabbix-password
+
+[webserver]
+# Web server configuration
+host = 0.0.0.0
+port = 5000
+debug = false
