@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Zabbix Host Creator Web Application
+Zabbix Host Creator Web Application - Backend Only
 A Flask-based web interface for creating multiple Zabbix hosts from IP lists
 """
 
@@ -132,6 +132,49 @@ class ZabbixAPI:
             logger.error(f"Exception getting host groups: {str(e)}")
             return []
     
+    def get_hosts_by_group(self, group_id):
+        """Get hosts by group ID with their interfaces"""
+        if not self.auth_token:
+            if not self.authenticate():
+                return []
+        
+        try:
+            payload = {
+                "jsonrpc": "2.0",
+                "method": "host.get",
+                "params": {
+                    "output": ["hostid", "host", "name", "status"],
+                    "groupids": [group_id],
+                    "selectInterfaces": ["interfaceid", "ip", "dns", "port", "type", "main"],
+                    "sortfield": "name"
+                },
+                "auth": self.auth_token,
+                "id": 4
+            }
+            
+            response = requests.post(
+                self.zabbix_api_url,
+                json=payload,
+                headers=self.headers,
+                verify=False,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                if 'result' in result:
+                    return result['result']
+                else:
+                    logger.error(f"Error getting hosts: {result.get('error', 'Unknown error')}")
+                    return []
+            else:
+                logger.error(f"HTTP error getting hosts: {response.status_code}")
+                return []
+                
+        except Exception as e:
+            logger.error(f"Exception getting hosts: {str(e)}")
+            return []
+    
     def create_host(self, hostname, ip_address, group_id):
         """Create a single host in Zabbix"""
         if not self.auth_token:
@@ -187,6 +230,117 @@ class ZabbixAPI:
             logger.error(f"Exception creating host {hostname}: {str(e)}")
             return False, f"Exception creating host {hostname}: {str(e)}"
     
+    def add_interface_to_host(self, host_id, interface_type, ip_address, port, is_main=False):
+        """Add interface to a specific host - Zabbix 7.0 compatible"""
+        if not self.auth_token:
+            if not self.authenticate():
+                return False, "Authentication failed"
+        
+        try:
+            # Base interface parameters according to Zabbix 7.0 documentation
+            interface_params = {
+                "hostid": str(host_id),
+                "main": "1" if is_main else "0",  # Make it main if needed
+                "type": str(interface_type),  # String value for interface type
+                "useip": "1",  # String value
+                "ip": str(ip_address),
+                "dns": "",
+                "port": str(port)
+            }
+            
+            # Add interface-specific details for Zabbix 7.0
+            if str(interface_type) == "2":  # SNMP interface
+                interface_params["details"] = {
+                    "version": "2",  # SNMP version as string
+                    "bulk": "1",     # Enable bulk requests
+                    "community": "public"  # Default community string
+                }
+            elif str(interface_type) == "3":  # IPMI interface
+                interface_params["details"] = {
+                    "username": "",
+                    "password": ""
+                }
+            elif str(interface_type) == "4":  # JMX interface
+                interface_params["details"] = {
+                    "username": "",
+                    "password": ""
+                }
+            
+            payload = {
+                "jsonrpc": "2.0",
+                "method": "hostinterface.create",
+                "params": interface_params,
+                "auth": self.auth_token,
+                "id": 5
+            }
+            
+            response = requests.post(
+                self.zabbix_api_url,
+                json=payload,
+                headers=self.headers,
+                verify=False,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                if 'result' in result:
+                    interface_id = result['result']['interfaceids'][0]
+                    logger.info(f"Successfully added interface {interface_id} to host {host_id}")
+                    return True, f"Interface added successfully"
+                else:
+                    error_msg = result.get('error', {})
+                    error_data = error_msg.get('data', error_msg.get('message', 'Unknown error'))
+                    logger.error(f"Error adding interface to host {host_id}: {error_data}")
+                    return False, f"Error: {error_data}"
+            else:
+                logger.error(f"HTTP error adding interface to host {host_id}: {response.status_code}")
+                return False, f"HTTP error occurred"
+                
+        except Exception as e:
+            logger.error(f"Exception adding interface to host {host_id}: {str(e)}")
+            return False, f"Exception: {str(e)}"
+    
+    def remove_interface_from_host(self, interface_id):
+        """Remove interface from host"""
+        if not self.auth_token:
+            if not self.authenticate():
+                return False, "Authentication failed"
+        
+        try:
+            payload = {
+                "jsonrpc": "2.0",
+                "method": "hostinterface.delete",
+                "params": [interface_id],
+                "auth": self.auth_token,
+                "id": 6
+            }
+            
+            response = requests.post(
+                self.zabbix_api_url,
+                json=payload,
+                headers=self.headers,
+                verify=False,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                if 'result' in result:
+                    logger.info(f"Successfully removed interface {interface_id}")
+                    return True, f"Interface removed successfully"
+                else:
+                    error_msg = result.get('error', {}).get('data', 'Unknown error')
+                    logger.error(f"Error removing interface {interface_id}: {error_msg}")
+                    return False, f"Error: {error_msg}"
+            else:
+                logger.error(f"HTTP error removing interface {interface_id}: {response.status_code}")
+                return False, f"HTTP error occurred"
+                
+        except Exception as e:
+            logger.error(f"Exception removing interface {interface_id}: {str(e)}")
+            return False, f"Exception: {str(e)}"
+    
     def create_multiple_hosts(self, base_hostname, ip_list, group_id, use_ip_as_hostname=False):
         """Create multiple hosts from IP list"""
         results = []
@@ -210,6 +364,101 @@ class ZabbixAPI:
             })
         
         return results
+    
+    def mass_update_interfaces(self, group_id, interface_type, port, operation):
+        """Mass add or remove interfaces from all hosts in a group"""
+        hosts = self.get_hosts_by_group(group_id)
+        results = []
+        
+        for host in hosts:
+            host_id = host['hostid']
+            host_name = host['name']
+            interfaces = host.get('interfaces', [])
+            
+            if operation == 'add':
+                # Get IP from existing Agent interface (type 1) or first interface
+                ip_address = None
+                for interface in interfaces:
+                    if interface['type'] == '1':  # Agent interface
+                        ip_address = interface['ip']
+                        break
+                
+                if not ip_address and interfaces:
+                    ip_address = interfaces[0]['ip']
+                
+                if ip_address:
+                    # Check if interface type already exists
+                    interface_exists = any(int(iface['type']) == interface_type for iface in interfaces)
+                    
+                    if not interface_exists:
+                        # Check if there's already a main interface of this type
+                        has_main_interface = any(
+                            int(iface['type']) == interface_type and iface['main'] == '1' 
+                            for iface in interfaces
+                        )
+                        
+                        # If no main interface of this type exists, make this one main
+                        is_main = not has_main_interface
+                        
+                        success, message = self.add_interface_to_host(
+                            host_id, interface_type, ip_address, port, is_main
+                        )
+                        results.append({
+                            'host_name': host_name,
+                            'operation': 'add',
+                            'interface_type': interface_type,
+                            'ip': ip_address,
+                            'success': success,
+                            'message': message
+                        })
+                    else:
+                        results.append({
+                            'host_name': host_name,
+                            'operation': 'add',
+                            'interface_type': interface_type,
+                            'ip': ip_address,
+                            'success': False,
+                            'message': 'Interface type already exists'
+                        })
+                else:
+                    results.append({
+                        'host_name': host_name,
+                        'operation': 'add',
+                        'interface_type': interface_type,
+                        'ip': 'N/A',
+                        'success': False,
+                        'message': 'No IP address found'
+                    })
+            
+            elif operation == 'remove':
+                # Find interfaces of the specified type (non-main interfaces only)
+                interfaces_to_remove = [
+                    iface for iface in interfaces 
+                    if int(iface['type']) == interface_type and iface['main'] == '0'
+                ]
+                
+                if interfaces_to_remove:
+                    for interface in interfaces_to_remove:
+                        success, message = self.remove_interface_from_host(interface['interfaceid'])
+                        results.append({
+                            'host_name': host_name,
+                            'operation': 'remove',
+                            'interface_type': interface_type,
+                            'ip': interface['ip'],
+                            'success': success,
+                            'message': message
+                        })
+                else:
+                    results.append({
+                        'host_name': host_name,
+                        'operation': 'remove',
+                        'interface_type': interface_type,
+                        'ip': 'N/A',
+                        'success': False,
+                        'message': 'No removable interface found'
+                    })
+        
+        return results
 
 # Initialize Zabbix API
 zabbix_api = ZabbixAPI()
@@ -224,6 +473,12 @@ def get_groups():
     """API endpoint to get Zabbix host groups"""
     groups = zabbix_api.get_host_groups()
     return jsonify(groups)
+
+@app.route('/api/hosts_by_group/<group_id>')
+def get_hosts_by_group(group_id):
+    """API endpoint to get hosts by group"""
+    hosts = zabbix_api.get_hosts_by_group(group_id)
+    return jsonify(hosts)
 
 @app.route('/api/create_hosts', methods=['POST'])
 def create_hosts():
@@ -272,6 +527,54 @@ def create_hosts():
         logger.error(f"Error in create_hosts endpoint: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/mass_update_interfaces', methods=['POST'])
+def mass_update_interfaces():
+    """API endpoint for mass interface updates"""
+    try:
+        data = request.get_json()
+        
+        # Validate input
+        if not data.get('group_id'):
+            return jsonify({'error': 'Group ID is required'}), 400
+        
+        if not data.get('interface_type'):
+            return jsonify({'error': 'Interface type is required'}), 400
+        
+        if not data.get('operation') or data['operation'] not in ['add', 'remove']:
+            return jsonify({'error': 'Operation must be "add" or "remove"'}), 400
+        
+        # Default ports for interface types
+        port_map = {
+            1: "10050",  # Agent
+            2: "161",    # SNMP
+            3: "623",    # IPMI
+            4: "12345"   # JMX
+        }
+        
+        port = data.get('port', port_map.get(int(data['interface_type']), "10050"))
+        
+        # Perform mass update
+        results = zabbix_api.mass_update_interfaces(
+            data['group_id'],
+            int(data['interface_type']),
+            port,
+            data['operation']
+        )
+        
+        return jsonify({
+            'success': True,
+            'results': results,
+            'summary': {
+                'total': len(results),
+                'successful': len([r for r in results if r['success']]),
+                'failed': len([r for r in results if not r['success']])
+            }
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in mass_update_interfaces endpoint: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/test_connection')
 def test_connection():
     """Test Zabbix connection"""
@@ -283,499 +586,11 @@ def datetime_filter(timestamp):
     """Format datetime for templates"""
     return datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
 
-# Create templates directory if it doesn't exist
+# Create templates and static directories if they don't exist
 if not os.path.exists('templates'):
     os.makedirs('templates')
-
-# HTML Template with Toggle Feature
-html_template = '''<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zabbix Host Creator</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 40px;
-            max-width: 800px;
-            width: 100%;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        .header h1 {
-            color: #333;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            color: #666;
-            font-size: 1.1em;
-        }
-        
-        .form-group {
-            margin-bottom: 25px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-        }
-        
-        input[type="text"], select, textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        input[type="text"]:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        input[type="text"]:disabled {
-            background-color: #f8f9fa;
-            color: #6c757d;
-            cursor: not-allowed;
-        }
-        
-        textarea {
-            resize: vertical;
-            height: 120px;
-        }
-        
-        /* Toggle Switch Styles */
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 8px;
-            margin-bottom: 8px;
-        }
-        
-        .toggle-switch {
-            position: relative;
-            width: 60px;
-            height: 30px;
-            background-color: #ccc;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .toggle-switch.active {
-            background-color: #667eea;
-        }
-        
-        .toggle-slider {
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 24px;
-            height: 24px;
-            background-color: white;
-            border-radius: 50%;
-            transition: transform 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .toggle-switch.active .toggle-slider {
-            transform: translateX(30px);
-        }
-        
-        .toggle-label {
-            font-size: 14px;
-            color: #666;
-            user-select: none;
-        }
-        
-        .toggle-switch.active + .toggle-label {
-            color: #667eea;
-            font-weight: 600;
-        }
-        
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-        
-        button {
-            flex: 1;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn-secondary {
-            background: #f8f9fa;
-            color: #333;
-            border: 2px solid #e1e5e9;
-        }
-        
-        .btn-secondary:hover {
-            background: #e9ecef;
-        }
-        
-        .status {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            display: none;
-        }
-        
-        .status.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .results {
-            margin-top: 20px;
-            display: none;
-        }
-        
-        .results-header {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px 10px 0 0;
-            border-bottom: 1px solid #e1e5e9;
-        }
-        
-        .results-body {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #e1e5e9;
-            border-radius: 0 0 10px 10px;
-        }
-        
-        .result-item {
-            padding: 10px 15px;
-            border-bottom: 1px solid #f1f3f4;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .result-item:last-child {
-            border-bottom: none;
-        }
-        
-        .result-success {
-            color: #28a745;
-        }
-        
-        .result-error {
-            color: #dc3545;
-        }
-        
-        .spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .connection-status {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        
-        .connection-status.connected {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .connection-status.disconnected {
-            background: #f8d7da;
-            color: #721c24;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🖥️ Zabbix Host Creator</h1>
-            <p>Create multiple Zabbix hosts from IP lists with ease</p>
-        </div>
-        
-        <form id="hostForm">
-            <div class="form-group">
-                <label for="base_hostname">Base Hostname:</label>
-                <input type="text" id="base_hostname" name="base_hostname" placeholder="e.g., Tplink" required>
-                
-                <div class="toggle-container">
-                    <div class="toggle-switch" id="ipToggle">
-                        <div class="toggle-slider"></div>
-                    </div>
-                    <span class="toggle-label">Use IP Address as Hostname</span>
-                </div>
-                
-                <small id="hostnameHelp" style="color: #666; margin-top: 5px; display: block;">
-                    Hosts will be created as: Tplink-01, Tplink-02, etc.
-                </small>
-            </div>
-            
-            <div class="form-group">
-                <label for="ip_list">IP Addresses (comma-separated):</label>
-                <textarea id="ip_list" name="ip_list" placeholder="192.168.1.1, 192.168.1.2, 192.168.1.3" required></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="group_id">Zabbix Host Group:</label>
-                <select id="group_id" name="group_id" required>
-                    <option value="">Loading groups...</option>
-                </select>
-            </div>
-            
-            <div class="button-group">
-                <button type="button" id="testBtn" class="btn-secondary">Test Connection</button>
-                <button type="submit" id="createBtn" class="btn-primary">Create Hosts</button>
-            </div>
-        </form>
-        
-        <div class="spinner" id="spinner"></div>
-        
-        <div class="status" id="status"></div>
-        
-        <div class="results" id="results">
-            <div class="results-header">
-                <h3 id="resultsTitle">Results</h3>
-            </div>
-            <div class="results-body" id="resultsBody"></div>
-        </div>
-    </div>
-    
-    <div class="connection-status" id="connectionStatus">
-        Checking connection...
-    </div>
-
-    <script>
-        let useIpAsHostname = false;
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            loadGroups();
-            testConnection();
-            
-            document.getElementById('testBtn').addEventListener('click', testConnection);
-            document.getElementById('hostForm').addEventListener('submit', createHosts);
-            document.getElementById('ipToggle').addEventListener('click', toggleHostnameMode);
-        });
-        
-        function toggleHostnameMode() {
-            const toggle = document.getElementById('ipToggle');
-            const hostnameInput = document.getElementById('base_hostname');
-            const hostnameHelp = document.getElementById('hostnameHelp');
-            
-            useIpAsHostname = !useIpAsHostname;
-            
-            if (useIpAsHostname) {
-                toggle.classList.add('active');
-                hostnameInput.disabled = true;
-                hostnameInput.required = false;
-                hostnameInput.value = '';
-                hostnameHelp.textContent = 'Hosts will be created using IP addresses as hostnames (e.g., 192.168.1.1, 192.168.1.2)';
-            } else {
-                toggle.classList.remove('active');
-                hostnameInput.disabled = false;
-                hostnameInput.required = true;
-                hostnameHelp.textContent = 'Hosts will be created as: Tplink-01, Tplink-02, etc.';
-            }
-        }
-        
-        function showStatus(message, isError = false) {
-            const status = document.getElementById('status');
-            status.textContent = message;
-            status.className = 'status ' + (isError ? 'error' : 'success');
-            status.style.display = 'block';
-            
-            setTimeout(() => {
-                status.style.display = 'none';
-            }, 5000);
-        }
-        
-        function showSpinner(show = true) {
-            document.getElementById('spinner').style.display = show ? 'block' : 'none';
-        }
-        
-        function loadGroups() {
-            fetch('/api/groups')
-                .then(response => response.json())
-                .then(groups => {
-                    const select = document.getElementById('group_id');
-                    select.innerHTML = '<option value="">Select a group...</option>';
-                    
-                    groups.forEach(group => {
-                        const option = document.createElement('option');
-                        option.value = group.groupid;
-                        option.textContent = group.name;
-                        select.appendChild(option);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error loading groups:', error);
-                    showStatus('Error loading groups: ' + error.message, true);
-                });
-        }
-        
-        function testConnection() {
-            const statusElement = document.getElementById('connectionStatus');
-            statusElement.textContent = 'Testing connection...';
-            statusElement.className = 'connection-status';
-            
-            fetch('/api/test_connection')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        statusElement.textContent = '✅ Connected to Zabbix';
-                        statusElement.className = 'connection-status connected';
-                        showStatus('Successfully connected to Zabbix!');
-                    } else {
-                        statusElement.textContent = '❌ Connection Failed';
-                        statusElement.className = 'connection-status disconnected';
-                        showStatus('Failed to connect to Zabbix. Check configuration.', true);
-                    }
-                })
-                .catch(error => {
-                    statusElement.textContent = '❌ Connection Error';
-                    statusElement.className = 'connection-status disconnected';
-                    showStatus('Connection error: ' + error.message, true);
-                });
-        }
-        
-        function createHosts(event) {
-            event.preventDefault();
-            
-            const formData = new FormData(event.target);
-            const data = {
-                base_hostname: formData.get('base_hostname'),
-                ip_list: formData.get('ip_list'),
-                group_id: formData.get('group_id'),
-                use_ip_as_hostname: useIpAsHostname
-            };
-            
-            showSpinner(true);
-            document.getElementById('createBtn').disabled = true;
-            
-            fetch('/api/create_hosts', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                showSpinner(false);
-                document.getElementById('createBtn').disabled = false;
-                
-                if (data.success) {
-                    showResults(data.results, data.summary);
-                    showStatus(`Successfully created ${data.summary.successful} of ${data.summary.total} hosts!`);
-                } else {
-                    showStatus('Error: ' + data.error, true);
-                }
-            })
-            .catch(error => {
-                showSpinner(false);
-                document.getElementById('createBtn').disabled = false;
-                showStatus('Error: ' + error.message, true);
-            });
-        }
-        
-        function showResults(results, summary) {
-            const resultsDiv = document.getElementById('results');
-            const resultsTitle = document.getElementById('resultsTitle');
-            const resultsBody = document.getElementById('resultsBody');
-            
-            resultsTitle.textContent = `Results (${summary.successful}/${summary.total} successful)`;
-            resultsBody.innerHTML = '';
-            
-            results.forEach(result => {
-                const item = document.createElement('div');
-                item.className = 'result-item';
-                item.innerHTML = `
-                    <div>
-                        <strong>${result.hostname}</strong> (${result.ip})
-                    </div>
-                    <div class="${result.success ? 'result-success' : 'result-error'}">
-                        ${result.success ? '✅' : '❌'} ${result.message}
-                    </div>
-                `;
-                resultsBody.appendChild(item);
-            });
-            
-            resultsDiv.style.display = 'block';
-        }
-    </script>
-</body>
-</html>'''
-
-# Write the HTML template
-with open('templates/index.html', 'w') as f:
-    f.write(html_template)
+if not os.path.exists('static'):
+    os.makedirs('static')
 
 if __name__ == '__main__':
     # Check if config file exists

@@ -4,307 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zabbix Host Creator</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 40px;
-            max-width: 800px;
-            width: 100%;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        .header h1 {
-            color: #333;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            color: #666;
-            font-size: 1.1em;
-        }
-        
-        .form-group {
-            margin-bottom: 25px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-        }
-        
-        input[type="text"], select, textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        input[type="text"]:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        input[type="text"]:disabled {
-            background-color: #f8f9fa;
-            color: #6c757d;
-            cursor: not-allowed;
-        }
-        
-        textarea {
-            resize: vertical;
-            height: 120px;
-        }
-        
-        /* Toggle Switch Styles */
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 8px;
-            margin-bottom: 8px;
-        }
-        
-        .toggle-switch {
-            position: relative;
-            width: 60px;
-            height: 30px;
-            background-color: #ccc;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .toggle-switch.active {
-            background-color: #667eea;
-        }
-        
-        .toggle-slider {
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 24px;
-            height: 24px;
-            background-color: white;
-            border-radius: 50%;
-            transition: transform 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .toggle-switch.active .toggle-slider {
-            transform: translateX(30px);
-        }
-        
-        .toggle-label {
-            font-size: 14px;
-            color: #666;
-            user-select: none;
-        }
-        
-        .toggle-switch.active + .toggle-label {
-            color: #667eea;
-            font-weight: 600;
-        }
-        
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-        
-        button {
-            flex: 1;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn-secondary {
-            background: #f8f9fa;
-            color: #333;
-            border: 2px solid #e1e5e9;
-        }
-        
-        .btn-secondary:hover {
-            background: #e9ecef;
-        }
-        
-        .status {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            display: none;
-        }
-        
-        .status.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .results {
-            margin-top: 20px;
-            display: none;
-        }
-        
-        .results-header {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px 10px 0 0;
-            border-bottom: 1px solid #e1e5e9;
-        }
-        
-        .results-body {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #e1e5e9;
-            border-radius: 0 0 10px 10px;
-        }
-        
-        .result-item {
-            padding: 10px 15px;
-            border-bottom: 1px solid #f1f3f4;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .result-item:last-child {
-            border-bottom: none;
-        }
-        
-        .result-success {
-            color: #28a745;
-        }
-        
-        .result-error {
-            color: #dc3545;
-        }
-        
-        .spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .connection-status {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        
-        .connection-status.connected {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .connection-status.disconnected {
-            background: #f8d7da;
-            color: #721c24;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>🖥️ Zabbix Host Creator</h1>
-            <p>Create multiple Zabbix hosts from IP lists with ease</p>
+            <p>Create multiple Zabbix hosts and manage interfaces with ease</p>
         </div>
         
-        <form id="hostForm">
-            <div class="form-group">
-                <label for="base_hostname">Base Hostname:</label>
-                <input type="text" id="base_hostname" name="base_hostname" placeholder="e.g., Tplink" required>
-                
-                <div class="toggle-container">
-                    <div class="toggle-switch" id="ipToggle">
-                        <div class="toggle-slider"></div>
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('create-hosts')">Create Hosts</button>
+            <button class="tab" onclick="showTab('host-interface')">Host Interface</button>
+        </div>
+        
+        <!-- Create Hosts Tab -->
+        <div id="create-hosts" class="tab-content active">
+            <form id="hostForm">
+                <div class="form-group">
+                    <label for="base_hostname">Base Hostname:</label>
+                    <input type="text" id="base_hostname" name="base_hostname" placeholder="e.g., Tplink" required>
+                    
+                    <div class="toggle-container">
+                        <div class="toggle-switch" id="ipToggle">
+                            <div class="toggle-slider"></div>
+                        </div>
+                        <span class="toggle-label">Use IP Address as Hostname</span>
                     </div>
-                    <span class="toggle-label">Use IP Address as Hostname</span>
+                    
+                    <small id="hostnameHelp" style="color: #666; margin-top: 5px; display: block;">
+                        Hosts will be created as: Tplink-01, Tplink-02, etc.
+                    </small>
                 </div>
                 
-                <small id="hostnameHelp" style="color: #666; margin-top: 5px; display: block;">
-                    Hosts will be created as: Tplink-01, Tplink-02, etc.
-                </small>
-            </div>
+                <div class="form-group">
+                    <label for="ip_list">IP Addresses (comma-separated):</label>
+                    <textarea id="ip_list" name="ip_list" placeholder="192.168.1.1, 192.168.1.2, 192.168.1.3" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="group_id">Zabbix Host Group:</label>
+                    <select id="group_id" name="group_id" required>
+                        <option value="">Loading groups...</option>
+                    </select>
+                </div>
+                
+                <div class="button-group">
+                    <button type="button" id="testBtn" class="btn-secondary">Test Connection</button>
+                    <button type="submit" id="createBtn" class="btn-primary">Create Hosts</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Host Interface Tab -->
+        <div id="host-interface" class="tab-content">
+            <form id="interfaceForm">
+                <div class="form-group">
+                    <label for="interface_group_id">Select Host Group:</label>
+                    <select id="interface_group_id" name="interface_group_id" required>
+                        <option value="">Loading groups...</option>
+                    </select>
+                    <button type="button" id="loadHostsBtn" class="btn-secondary" style="margin-top: 10px; width: auto; padding: 8px 16px;">Load Hosts</button>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="interface_type">Interface Type:</label>
+                        <select id="interface_type" name="interface_type" required>
+                            <option value="1">Agent</option>
+                            <option value="2">SNMP</option>
+                            <option value="3">IPMI</option>
+                            <option value="4">JMX</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="interface_port">Port:</label>
+                        <input type="number" id="interface_port" name="interface_port" value="10050" min="1" max="65535">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Operation:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="add_operation" name="operation" value="add" checked>
+                            <label for="add_operation">Add Interface</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="remove_operation" name="operation" value="remove">
+                            <label for="remove_operation">Remove Interface</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" id="updateInterfacesBtn" class="btn-primary">Update Interfaces</button>
+                </div>
+            </form>
             
-            <div class="form-group">
-                <label for="ip_list">IP Addresses (comma-separated):</label>
-                <textarea id="ip_list" name="ip_list" placeholder="192.168.1.1, 192.168.1.2, 192.168.1.3" required></textarea>
+            <!-- Host List -->
+            <div id="hostList" class="host-list" style="display: none;">
+                <div id="hostListContent"></div>
             </div>
-            
-            <div class="form-group">
-                <label for="group_id">Zabbix Host Group:</label>
-                <select id="group_id" name="group_id" required>
-                    <option value="">Loading groups...</option>
-                </select>
-            </div>
-            
-            <div class="button-group">
-                <button type="button" id="testBtn" class="btn-secondary">Test Connection</button>
-                <button type="submit" id="createBtn" class="btn-primary">Create Hosts</button>
-            </div>
-        </form>
+        </div>
         
         <div class="spinner" id="spinner"></div>
         
@@ -322,163 +126,6 @@
         Checking connection...
     </div>
 
-    <script>
-        let useIpAsHostname = false;
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            loadGroups();
-            testConnection();
-            
-            document.getElementById('testBtn').addEventListener('click', testConnection);
-            document.getElementById('hostForm').addEventListener('submit', createHosts);
-            document.getElementById('ipToggle').addEventListener('click', toggleHostnameMode);
-        });
-        
-        function toggleHostnameMode() {
-            const toggle = document.getElementById('ipToggle');
-            const hostnameInput = document.getElementById('base_hostname');
-            const hostnameHelp = document.getElementById('hostnameHelp');
-            
-            useIpAsHostname = !useIpAsHostname;
-            
-            if (useIpAsHostname) {
-                toggle.classList.add('active');
-                hostnameInput.disabled = true;
-                hostnameInput.required = false;
-                hostnameInput.value = '';
-                hostnameHelp.textContent = 'Hosts will be created using IP addresses as hostnames (e.g., 192.168.1.1, 192.168.1.2)';
-            } else {
-                toggle.classList.remove('active');
-                hostnameInput.disabled = false;
-                hostnameInput.required = true;
-                hostnameHelp.textContent = 'Hosts will be created as: Tplink-01, Tplink-02, etc.';
-            }
-        }
-        
-        function showStatus(message, isError = false) {
-            const status = document.getElementById('status');
-            status.textContent = message;
-            status.className = 'status ' + (isError ? 'error' : 'success');
-            status.style.display = 'block';
-            
-            setTimeout(() => {
-                status.style.display = 'none';
-            }, 5000);
-        }
-        
-        function showSpinner(show = true) {
-            document.getElementById('spinner').style.display = show ? 'block' : 'none';
-        }
-        
-        function loadGroups() {
-            fetch('/api/groups')
-                .then(response => response.json())
-                .then(groups => {
-                    const select = document.getElementById('group_id');
-                    select.innerHTML = '<option value="">Select a group...</option>';
-                    
-                    groups.forEach(group => {
-                        const option = document.createElement('option');
-                        option.value = group.groupid;
-                        option.textContent = group.name;
-                        select.appendChild(option);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error loading groups:', error);
-                    showStatus('Error loading groups: ' + error.message, true);
-                });
-        }
-        
-        function testConnection() {
-            const statusElement = document.getElementById('connectionStatus');
-            statusElement.textContent = 'Testing connection...';
-            statusElement.className = 'connection-status';
-            
-            fetch('/api/test_connection')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        statusElement.textContent = '✅ Connected to Zabbix';
-                        statusElement.className = 'connection-status connected';
-                        showStatus('Successfully connected to Zabbix!');
-                    } else {
-                        statusElement.textContent = '❌ Connection Failed';
-                        statusElement.className = 'connection-status disconnected';
-                        showStatus('Failed to connect to Zabbix. Check configuration.', true);
-                    }
-                })
-                .catch(error => {
-                    statusElement.textContent = '❌ Connection Error';
-                    statusElement.className = 'connection-status disconnected';
-                    showStatus('Connection error: ' + error.message, true);
-                });
-        }
-        
-        function createHosts(event) {
-            event.preventDefault();
-            
-            const formData = new FormData(event.target);
-            const data = {
-                base_hostname: formData.get('base_hostname'),
-                ip_list: formData.get('ip_list'),
-                group_id: formData.get('group_id'),
-                use_ip_as_hostname: useIpAsHostname
-            };
-            
-            showSpinner(true);
-            document.getElementById('createBtn').disabled = true;
-            
-            fetch('/api/create_hosts', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                showSpinner(false);
-                document.getElementById('createBtn').disabled = false;
-                
-                if (data.success) {
-                    showResults(data.results, data.summary);
-                    showStatus(`Successfully created ${data.summary.successful} of ${data.summary.total} hosts!`);
-                } else {
-                    showStatus('Error: ' + data.error, true);
-                }
-            })
-            .catch(error => {
-                showSpinner(false);
-                document.getElementById('createBtn').disabled = false;
-                showStatus('Error: ' + error.message, true);
-            });
-        }
-        
-        function showResults(results, summary) {
-            const resultsDiv = document.getElementById('results');
-            const resultsTitle = document.getElementById('resultsTitle');
-            const resultsBody = document.getElementById('resultsBody');
-            
-            resultsTitle.textContent = `Results (${summary.successful}/${summary.total} successful)`;
-            resultsBody.innerHTML = '';
-            
-            results.forEach(result => {
-                const item = document.createElement('div');
-                item.className = 'result-item';
-                item.innerHTML = `
-                    <div>
-                        <strong>${result.hostname}</strong> (${result.ip})
-                    </div>
-                    <div class="${result.success ? 'result-success' : 'result-error'}">
-                        ${result.success ? '✅' : '❌'} ${result.message}
-                    </div>
-                `;
-                resultsBody.appendChild(item);
-            });
-            
-            resultsDiv.style.display = 'block';
-        }
-    </script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>
