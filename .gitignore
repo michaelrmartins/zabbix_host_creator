@@ -1,3 +1,4 @@
 zabbix_host_creator.log
 config.ini
 templates
+*.log

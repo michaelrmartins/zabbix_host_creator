@@ -81,3 +81,74 @@
 2025-08-22 11:25:03,762 - INFO - 192.168.55.9 - - [22/Aug/2025 11:25:03] "GET /api/groups HTTP/1.1" 200 -
 2025-08-22 11:25:03,858 - INFO - Successfully authenticated with Zabbix
 2025-08-22 11:25:03,859 - INFO - 192.168.55.9 - - [22/Aug/2025 11:25:03] "GET /api/test_connection HTTP/1.1" 200 -
+2025-08-25 09:06:37,940 - INFO - Starting Zabbix Host Creator on 0.0.0.0:5000
+2025-08-25 09:06:37,942 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.199:5000
+2025-08-25 09:06:37,942 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-25 09:06:44,912 - INFO - 192.168.55.9 - - [25/Aug/2025 09:06:44] "GET / HTTP/1.1" 200 -
+2025-08-25 09:06:45,068 - INFO - 192.168.55.9 - - [25/Aug/2025 09:06:45] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-08-25 09:06:45,096 - INFO - Successfully authenticated with Zabbix
+2025-08-25 09:06:45,098 - INFO - 192.168.55.9 - - [25/Aug/2025 09:06:45] "GET /api/test_connection HTTP/1.1" 200 -
+2025-08-25 09:06:45,097 - INFO - Successfully authenticated with Zabbix
+2025-08-25 09:06:45,116 - INFO - 192.168.55.9 - - [25/Aug/2025 09:06:45] "GET /api/groups HTTP/1.1" 200 -
+2025-08-25 09:09:06,199 - INFO - Successfully created host Switch-01 with ID 12949
+2025-08-25 09:09:06,228 - INFO - Successfully created host Switch-02 with ID 12950
+2025-08-25 09:09:06,259 - INFO - Successfully created host Switch-03 with ID 12951
+2025-08-25 09:09:06,293 - INFO - Successfully created host Switch-04 with ID 12952
+2025-08-25 09:09:06,324 - INFO - Successfully created host Switch-05 with ID 12953
+2025-08-25 09:09:06,353 - INFO - Successfully created host Switch-06 with ID 12954
+2025-08-25 09:09:06,384 - INFO - Successfully created host Switch-07 with ID 12955
+2025-08-25 09:09:06,414 - INFO - Successfully created host Switch-08 with ID 12956
+2025-08-25 09:09:06,443 - INFO - Successfully created host Switch-09 with ID 12957
+2025-08-25 09:09:06,476 - INFO - Successfully created host Switch-10 with ID 12958
+2025-08-25 09:09:06,504 - INFO - Successfully created host Switch-11 with ID 12959
+2025-08-25 09:09:06,533 - INFO - Successfully created host Switch-12 with ID 12960
+2025-08-25 09:09:06,560 - INFO - Successfully created host Switch-13 with ID 12961
+2025-08-25 09:09:06,587 - INFO - Successfully created host Switch-14 with ID 12962
+2025-08-25 09:09:06,616 - INFO - Successfully created host Switch-15 with ID 12963
+2025-08-25 09:09:06,643 - INFO - Successfully created host Switch-16 with ID 12964
+2025-08-25 09:09:06,672 - INFO - Successfully created host Switch-17 with ID 12965
+2025-08-25 09:09:06,701 - INFO - Successfully created host Switch-18 with ID 12966
+2025-08-25 09:09:06,734 - INFO - Successfully created host Switch-19 with ID 12967
+2025-08-25 09:09:06,772 - INFO - Successfully created host Switch-20 with ID 12968
+2025-08-25 09:09:06,773 - INFO - 192.168.55.9 - - [25/Aug/2025 09:09:06] "POST /api/create_hosts HTTP/1.1" 200 -
+2025-08-25 11:24:33,098 - INFO - Successfully created host Unifi -01 with ID 12985
+2025-08-25 11:24:33,128 - INFO - Successfully created host Unifi -02 with ID 12986
+2025-08-25 11:24:33,160 - INFO - Successfully created host Unifi -03 with ID 12987
+2025-08-25 11:24:33,190 - INFO - Successfully created host Unifi -04 with ID 12988
+2025-08-25 11:24:33,220 - INFO - Successfully created host Unifi -05 with ID 12989
+2025-08-25 11:24:33,249 - INFO - Successfully created host Unifi -06 with ID 12990
+2025-08-25 11:24:33,279 - INFO - Successfully created host Unifi -07 with ID 12991
+2025-08-25 11:24:33,313 - INFO - Successfully created host Unifi -08 with ID 12992
+2025-08-25 11:24:33,341 - INFO - Successfully created host Unifi -09 with ID 12993
+2025-08-25 11:24:33,370 - INFO - Successfully created host Unifi -10 with ID 12994
+2025-08-25 11:24:33,399 - INFO - Successfully created host Unifi -11 with ID 12995
+2025-08-25 11:24:33,429 - INFO - Successfully created host Unifi -12 with ID 12996
+2025-08-25 11:24:33,457 - INFO - Successfully created host Unifi -13 with ID 12997
+2025-08-25 11:24:33,491 - INFO - Successfully created host Unifi -14 with ID 12998
+2025-08-25 11:24:33,521 - INFO - Successfully created host Unifi -15 with ID 12999
+2025-08-25 11:24:33,568 - INFO - Successfully created host Unifi -16 with ID 13000
+2025-08-25 11:24:33,596 - INFO - Successfully created host Unifi -17 with ID 13001
+2025-08-25 11:24:33,625 - INFO - Successfully created host Unifi -18 with ID 13002
+2025-08-25 11:24:33,650 - INFO - Successfully created host Unifi -19 with ID 13003
+2025-08-25 11:24:33,677 - INFO - Successfully created host Unifi -20 with ID 13004
+2025-08-25 11:24:33,709 - INFO - Successfully created host Unifi -21 with ID 13005
+2025-08-25 11:24:33,737 - INFO - Successfully created host Unifi -22 with ID 13006
+2025-08-25 11:24:33,767 - INFO - Successfully created host Unifi -23 with ID 13007
+2025-08-25 11:24:33,801 - INFO - Successfully created host Unifi -24 with ID 13008
+2025-08-25 11:24:33,828 - INFO - Successfully created host Unifi -25 with ID 13009
+2025-08-25 11:24:33,856 - INFO - Successfully created host Unifi -26 with ID 13010
+2025-08-25 11:24:33,892 - INFO - Successfully created host Unifi -27 with ID 13011
+2025-08-25 11:24:33,932 - INFO - Successfully created host Unifi -28 with ID 13012
+2025-08-25 11:24:33,963 - INFO - Successfully created host Unifi -29 with ID 13013
+2025-08-25 11:24:33,991 - INFO - Successfully created host Unifi -30 with ID 13014
+2025-08-25 11:24:34,029 - INFO - Successfully created host Unifi -31 with ID 13015
+2025-08-25 11:24:34,060 - INFO - Successfully created host Unifi -32 with ID 13016
+2025-08-25 11:24:34,094 - INFO - Successfully created host Unifi -33 with ID 13017
+2025-08-25 11:24:34,124 - INFO - Successfully created host Unifi -34 with ID 13018
+2025-08-25 11:24:34,151 - INFO - Successfully created host Unifi -35 with ID 13019
+2025-08-25 11:24:34,180 - INFO - Successfully created host Unifi -36 with ID 13020
+2025-08-25 11:24:34,207 - INFO - Successfully created host Unifi -37 with ID 13021
+2025-08-25 11:24:34,209 - INFO - 192.168.55.9 - - [25/Aug/2025 11:24:34] "POST /api/create_hosts HTTP/1.1" 200 -
