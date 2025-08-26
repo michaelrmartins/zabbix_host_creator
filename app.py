@@ -175,13 +175,52 @@ class ZabbixAPI:
             logger.error(f"Exception getting hosts: {str(e)}")
             return []
     
-    def create_host(self, hostname, ip_address, group_id):
-        """Create a single host in Zabbix"""
+    def create_host(self, hostname, ip_address, group_id, interface_type=1, interface_port=None):
+        """Create a single host in Zabbix with specified interface type"""
         if not self.auth_token:
             if not self.authenticate():
                 return False, "Authentication failed"
         
+        # Default ports for each interface type
+        default_ports = {
+            1: "10050",  # Agent
+            2: "161",    # SNMP
+            3: "623",    # IPMI
+            4: "12345"   # JMX
+        }
+        
+        # Use provided port or default for interface type
+        port = interface_port if interface_port else default_ports.get(interface_type, "10050")
+        
         try:
+            # Build interface configuration
+            interface = {
+                "type": interface_type,
+                "main": 1,
+                "useip": 1,
+                "ip": ip_address,
+                "dns": "",
+                "port": str(port)
+            }
+            
+            # Add interface-specific details for Zabbix 7.0
+            if interface_type == 2:  # SNMP interface
+                interface["details"] = {
+                    "version": "2",  # SNMP version
+                    "bulk": "1",     # Enable bulk requests
+                    "community": "public"  # Default community string
+                }
+            elif interface_type == 3:  # IPMI interface
+                interface["details"] = {
+                    "username": "",
+                    "password": ""
+                }
+            elif interface_type == 4:  # JMX interface
+                interface["details"] = {
+                    "username": "",
+                    "password": ""
+                }
+            
             payload = {
                 "jsonrpc": "2.0",
                 "method": "host.create",
@@ -189,16 +228,7 @@ class ZabbixAPI:
                     "host": hostname,
                     "name": hostname,
                     "groups": [{"groupid": group_id}],
-                    "interfaces": [
-                        {
-                            "type": 1,  # Agent interface
-                            "main": 1,
-                            "useip": 1,
-                            "ip": ip_address,
-                            "dns": "",
-                            "port": "10050"
-                        }
-                    ]
+                    "interfaces": [interface]
                 },
                 "auth": self.auth_token,
                 "id": 3
@@ -216,8 +246,10 @@ class ZabbixAPI:
                 result = response.json()
                 if 'result' in result:
                     host_id = result['result']['hostids'][0]
-                    logger.info(f"Successfully created host {hostname} with ID {host_id}")
-                    return True, f"Host {hostname} created successfully"
+                    interface_type_names = {1: "Agent", 2: "SNMP", 3: "IPMI", 4: "JMX"}
+                    interface_name = interface_type_names.get(interface_type, "Unknown")
+                    logger.info(f"Successfully created host {hostname} with ID {host_id} and {interface_name} interface on port {port}")
+                    return True, f"Host {hostname} created successfully with {interface_name} interface"
                 else:
                     error_msg = result.get('error', {}).get('data', 'Unknown error')
                     logger.error(f"Error creating host {hostname}: {error_msg}")
@@ -341,8 +373,8 @@ class ZabbixAPI:
             logger.error(f"Exception removing interface {interface_id}: {str(e)}")
             return False, f"Exception: {str(e)}"
     
-    def create_multiple_hosts(self, base_hostname, ip_list, group_id, use_ip_as_hostname=False):
-        """Create multiple hosts from IP list"""
+    def create_multiple_hosts(self, base_hostname, ip_list, group_id, use_ip_as_hostname=False, interface_type=1, interface_port=None):
+        """Create multiple hosts from IP list with specified interface type"""
         results = []
         
         for i, ip in enumerate(ip_list, 1):
@@ -355,7 +387,7 @@ class ZabbixAPI:
                 # Use base hostname with sequential numbering
                 hostname = f"{base_hostname}-{i:02d}"
             
-            success, message = self.create_host(hostname, ip_clean, group_id)
+            success, message = self.create_host(hostname, ip_clean, group_id, interface_type, interface_port)
             results.append({
                 'hostname': hostname,
                 'ip': ip_clean,
@@ -482,12 +514,16 @@ def get_hosts_by_group(group_id):
 
 @app.route('/api/create_hosts', methods=['POST'])
 def create_hosts():
-    """API endpoint to create hosts"""
+    """API endpoint to create hosts with specified interface type"""
     try:
         data = request.get_json()
         
         # Check if using IP as hostname
         use_ip_as_hostname = data.get('use_ip_as_hostname', False)
+        
+        # Get interface type and port
+        interface_type = int(data.get('interface_type', 1))  # Default to Agent
+        interface_port = data.get('interface_port')  # Can be None for default
         
         # Validate input based on mode
         if not use_ip_as_hostname and not data.get('base_hostname'):
@@ -505,12 +541,14 @@ def create_hosts():
         if not ip_list:
             return jsonify({'error': 'No valid IPs provided'}), 400
         
-        # Create hosts
+        # Create hosts with specified interface type
         results = zabbix_api.create_multiple_hosts(
             data.get('base_hostname', ''),
             ip_list,
             data['group_id'],
-            use_ip_as_hostname
+            use_ip_as_hostname,
+            interface_type,
+            interface_port
         )
         
         return jsonify({

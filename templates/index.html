@@ -43,11 +43,31 @@
                     <textarea id="ip_list" name="ip_list" placeholder="192.168.1.1, 192.168.1.2, 192.168.1.3" required></textarea>
                 </div>
                 
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="group_id">Zabbix Host Group:</label>
+                        <select id="group_id" name="group_id" required>
+                            <option value="">Loading groups...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="create_interface_type">Interface Type:</label>
+                        <select id="create_interface_type" name="create_interface_type" required>
+                            <option value="1" selected>Agent (Port 10050)</option>
+                            <option value="2">SNMP (Port 161)</option>
+                            <option value="3">IPMI (Port 623)</option>
+                            <option value="4">JMX (Port 12345)</option>
+                        </select>
+                    </div>
+                </div>
+                
                 <div class="form-group">
-                    <label for="group_id">Zabbix Host Group:</label>
-                    <select id="group_id" name="group_id" required>
-                        <option value="">Loading groups...</option>
-                    </select>
+                    <label for="create_interface_port">Custom Port (optional):</label>
+                    <input type="number" id="create_interface_port" name="create_interface_port" placeholder="Leave empty for default port" min="1" max="65535">
+                    <small style="color: #666; margin-top: 5px; display: block;">
+                        Leave empty to use the default port for the selected interface type
+                    </small>
                 </div>
                 
                 <div class="button-group">

@@ -471,3 +471,134 @@
 2025-08-25 16:40:37,341 - INFO - 192.168.55.9 - - [25/Aug/2025 16:40:37] "GET /api/hosts_by_group/24 HTTP/1.1" 200 -
 2025-08-25 16:40:45,633 - INFO - 192.168.55.9 - - [25/Aug/2025 16:40:45] "POST /api/mass_update_interfaces HTTP/1.1" 200 -
 2025-08-25 16:40:45,667 - INFO - 192.168.55.9 - - [25/Aug/2025 16:40:45] "GET /api/hosts_by_group/24 HTTP/1.1" 200 -
+2025-08-26 10:52:24,481 - INFO - Starting Zabbix Host Creator on 0.0.0.0:5000
+2025-08-26 10:52:24,483 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.199:5000
+2025-08-26 10:52:24,484 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-26 10:52:39,921 - INFO - 192.168.55.9 - - [26/Aug/2025 10:52:39] "GET / HTTP/1.1" 200 -
+2025-08-26 10:52:39,962 - INFO - 192.168.55.9 - - [26/Aug/2025 10:52:39] "GET /static/styles.css HTTP/1.1" 200 -
+2025-08-26 10:52:39,966 - INFO - 192.168.55.9 - - [26/Aug/2025 10:52:39] "GET /static/app.js HTTP/1.1" 200 -
+2025-08-26 10:52:40,076 - INFO - 192.168.55.9 - - [26/Aug/2025 10:52:40] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-08-26 10:52:40,170 - INFO - Successfully authenticated with Zabbix
+2025-08-26 10:52:40,171 - INFO - Successfully authenticated with Zabbix
+2025-08-26 10:52:40,174 - INFO - 192.168.55.9 - - [26/Aug/2025 10:52:40] "GET /api/test_connection HTTP/1.1" 200 -
+2025-08-26 10:52:40,188 - INFO - 192.168.55.9 - - [26/Aug/2025 10:52:40] "GET /api/groups HTTP/1.1" 200 -
+2025-08-26 10:52:41,721 - INFO - 192.168.55.9 - - [26/Aug/2025 10:52:41] "GET /api/groups HTTP/1.1" 200 -
+2025-08-26 11:15:33,970 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.199:5000
+2025-08-26 11:15:33,970 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-26 11:15:33,975 - INFO -  * Restarting with stat
+2025-08-26 11:16:23,179 - WARNING -  * Debugger is active!
+2025-08-26 11:16:23,180 - INFO -  * Debugger PIN: 210-695-381
+2025-08-26 11:16:23,204 - INFO - 192.168.55.9 - - [26/Aug/2025 11:16:23] "GET / HTTP/1.1" 200 -
+2025-08-26 11:16:23,261 - INFO - 192.168.55.9 - - [26/Aug/2025 11:16:23] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-08-26 11:16:23,275 - INFO - 192.168.55.9 - - [26/Aug/2025 11:16:23] "[36mGET /static/app.js HTTP/1.1[0m" 304 -
+2025-08-26 11:16:23,454 - INFO - Successfully authenticated with Zabbix
+2025-08-26 11:16:23,455 - INFO - Successfully authenticated with Zabbix
+2025-08-26 11:16:23,456 - INFO - 192.168.55.9 - - [26/Aug/2025 11:16:23] "GET /api/test_connection HTTP/1.1" 200 -
+2025-08-26 11:16:23,473 - INFO - 192.168.55.9 - - [26/Aug/2025 11:16:23] "GET /api/groups HTTP/1.1" 200 -
+2025-08-26 11:16:30,880 - INFO - 192.168.55.9 - - [26/Aug/2025 11:16:30] "GET / HTTP/1.1" 200 -
+2025-08-26 11:16:30,965 - INFO - 192.168.55.9 - - [26/Aug/2025 11:16:30] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-08-26 11:16:30,975 - INFO - 192.168.55.9 - - [26/Aug/2025 11:16:30] "[36mGET /static/app.js HTTP/1.1[0m" 304 -
+2025-08-26 11:16:31,024 - INFO - 192.168.55.9 - - [26/Aug/2025 11:16:31] "GET /api/groups HTTP/1.1" 200 -
+2025-08-26 11:16:31,112 - INFO - Successfully authenticated with Zabbix
+2025-08-26 11:16:31,113 - INFO - 192.168.55.9 - - [26/Aug/2025 11:16:31] "GET /api/test_connection HTTP/1.1" 200 -
+2025-08-26 11:21:03,242 - INFO - Successfully created host Impressora -01 with ID 13110 and Agent interface on port 10050
+2025-08-26 11:21:03,273 - INFO - Successfully created host Impressora -02 with ID 13111 and Agent interface on port 10050
+2025-08-26 11:21:03,371 - INFO - Successfully created host Impressora -03 with ID 13112 and Agent interface on port 10050
+2025-08-26 11:21:03,400 - INFO - Successfully created host Impressora -04 with ID 13113 and Agent interface on port 10050
+2025-08-26 11:21:03,437 - INFO - Successfully created host Impressora -05 with ID 13114 and Agent interface on port 10050
+2025-08-26 11:21:03,469 - INFO - Successfully created host Impressora -06 with ID 13115 and Agent interface on port 10050
+2025-08-26 11:21:03,500 - INFO - Successfully created host Impressora -07 with ID 13116 and Agent interface on port 10050
+2025-08-26 11:21:03,528 - INFO - Successfully created host Impressora -08 with ID 13117 and Agent interface on port 10050
+2025-08-26 11:21:03,559 - INFO - Successfully created host Impressora -09 with ID 13118 and Agent interface on port 10050
+2025-08-26 11:21:03,588 - INFO - Successfully created host Impressora -10 with ID 13119 and Agent interface on port 10050
+2025-08-26 11:21:03,615 - INFO - Successfully created host Impressora -11 with ID 13120 and Agent interface on port 10050
+2025-08-26 11:21:03,645 - INFO - Successfully created host Impressora -12 with ID 13121 and Agent interface on port 10050
+2025-08-26 11:21:03,674 - INFO - Successfully created host Impressora -13 with ID 13122 and Agent interface on port 10050
+2025-08-26 11:21:03,703 - INFO - Successfully created host Impressora -14 with ID 13123 and Agent interface on port 10050
+2025-08-26 11:21:03,730 - INFO - Successfully created host Impressora -15 with ID 13124 and Agent interface on port 10050
+2025-08-26 11:21:03,759 - INFO - Successfully created host Impressora -16 with ID 13125 and Agent interface on port 10050
+2025-08-26 11:21:03,791 - INFO - Successfully created host Impressora -17 with ID 13126 and Agent interface on port 10050
+2025-08-26 11:21:03,819 - INFO - Successfully created host Impressora -18 with ID 13127 and Agent interface on port 10050
+2025-08-26 11:21:03,848 - INFO - Successfully created host Impressora -19 with ID 13128 and Agent interface on port 10050
+2025-08-26 11:21:03,878 - INFO - Successfully created host Impressora -20 with ID 13129 and Agent interface on port 10050
+2025-08-26 11:21:03,905 - INFO - Successfully created host Impressora -21 with ID 13130 and Agent interface on port 10050
+2025-08-26 11:21:03,953 - ERROR - Error creating host Impressora -22: Invalid IP address "192.168.49.40
+192.168.49.10".
+2025-08-26 11:21:03,985 - INFO - Successfully created host Impressora -23 with ID 13131 and Agent interface on port 10050
+2025-08-26 11:21:04,015 - INFO - Successfully created host Impressora -24 with ID 13132 and Agent interface on port 10050
+2025-08-26 11:21:04,045 - INFO - Successfully created host Impressora -25 with ID 13133 and Agent interface on port 10050
+2025-08-26 11:21:04,077 - INFO - Successfully created host Impressora -26 with ID 13134 and Agent interface on port 10050
+2025-08-26 11:21:04,116 - INFO - Successfully created host Impressora -27 with ID 13135 and Agent interface on port 10050
+2025-08-26 11:21:04,149 - INFO - Successfully created host Impressora -28 with ID 13136 and Agent interface on port 10050
+2025-08-26 11:21:04,182 - INFO - Successfully created host Impressora -29 with ID 13137 and Agent interface on port 10050
+2025-08-26 11:21:04,216 - INFO - Successfully created host Impressora -30 with ID 13138 and Agent interface on port 10050
+2025-08-26 11:21:04,244 - INFO - Successfully created host Impressora -31 with ID 13139 and Agent interface on port 10050
+2025-08-26 11:21:04,274 - INFO - Successfully created host Impressora -32 with ID 13140 and Agent interface on port 10050
+2025-08-26 11:21:04,303 - INFO - Successfully created host Impressora -33 with ID 13141 and Agent interface on port 10050
+2025-08-26 11:21:04,330 - INFO - Successfully created host Impressora -34 with ID 13142 and Agent interface on port 10050
+2025-08-26 11:21:04,357 - INFO - Successfully created host Impressora -35 with ID 13143 and Agent interface on port 10050
+2025-08-26 11:21:04,394 - INFO - Successfully created host Impressora -36 with ID 13144 and Agent interface on port 10050
+2025-08-26 11:21:04,421 - INFO - Successfully created host Impressora -37 with ID 13145 and Agent interface on port 10050
+2025-08-26 11:21:04,449 - INFO - Successfully created host Impressora -38 with ID 13146 and Agent interface on port 10050
+2025-08-26 11:21:04,476 - INFO - Successfully created host Impressora -39 with ID 13147 and Agent interface on port 10050
+2025-08-26 11:21:04,505 - INFO - Successfully created host Impressora -40 with ID 13148 and Agent interface on port 10050
+2025-08-26 11:21:04,533 - INFO - Successfully created host Impressora -41 with ID 13149 and Agent interface on port 10050
+2025-08-26 11:21:04,562 - INFO - Successfully created host Impressora -42 with ID 13150 and Agent interface on port 10050
+2025-08-26 11:21:04,592 - INFO - Successfully created host Impressora -43 with ID 13151 and Agent interface on port 10050
+2025-08-26 11:21:04,594 - INFO - 192.168.55.9 - - [26/Aug/2025 11:21:04] "POST /api/create_hosts HTTP/1.1" 200 -
+2025-08-26 11:21:49,407 - INFO - 192.168.55.9 - - [26/Aug/2025 11:21:49] "GET /api/groups HTTP/1.1" 200 -
+2025-08-26 11:21:59,952 - INFO - Successfully added interface 2651 to host 13110
+2025-08-26 11:21:59,972 - INFO - Successfully added interface 2652 to host 13111
+2025-08-26 11:21:59,994 - INFO - Successfully added interface 2653 to host 13112
+2025-08-26 11:22:00,037 - INFO - Successfully added interface 2654 to host 13113
+2025-08-26 11:22:00,055 - INFO - Successfully added interface 2655 to host 13114
+2025-08-26 11:22:00,073 - INFO - Successfully added interface 2656 to host 13115
+2025-08-26 11:22:00,092 - INFO - Successfully added interface 2657 to host 13116
+2025-08-26 11:22:00,115 - INFO - Successfully added interface 2658 to host 13117
+2025-08-26 11:22:00,134 - INFO - Successfully added interface 2659 to host 13118
+2025-08-26 11:22:00,153 - INFO - Successfully added interface 2660 to host 13119
+2025-08-26 11:22:00,172 - INFO - Successfully added interface 2661 to host 13120
+2025-08-26 11:22:00,192 - INFO - Successfully added interface 2662 to host 13121
+2025-08-26 11:22:00,211 - INFO - Successfully added interface 2663 to host 13122
+2025-08-26 11:22:00,231 - INFO - Successfully added interface 2664 to host 13123
+2025-08-26 11:22:00,250 - INFO - Successfully added interface 2665 to host 13124
+2025-08-26 11:22:00,270 - INFO - Successfully added interface 2666 to host 13125
+2025-08-26 11:22:00,291 - INFO - Successfully added interface 2667 to host 13126
+2025-08-26 11:22:00,310 - INFO - Successfully added interface 2668 to host 13127
+2025-08-26 11:22:00,331 - INFO - Successfully added interface 2669 to host 13128
+2025-08-26 11:22:00,350 - INFO - Successfully added interface 2670 to host 13129
+2025-08-26 11:22:00,378 - INFO - Successfully added interface 2671 to host 13130
+2025-08-26 11:22:00,401 - INFO - Successfully added interface 2672 to host 13131
+2025-08-26 11:22:00,426 - INFO - Successfully added interface 2673 to host 13132
+2025-08-26 11:22:00,450 - INFO - Successfully added interface 2674 to host 13133
+2025-08-26 11:22:00,471 - INFO - Successfully added interface 2675 to host 13134
+2025-08-26 11:22:00,491 - INFO - Successfully added interface 2676 to host 13135
+2025-08-26 11:22:00,513 - INFO - Successfully added interface 2677 to host 13136
+2025-08-26 11:22:00,534 - INFO - Successfully added interface 2678 to host 13137
+2025-08-26 11:22:00,556 - INFO - Successfully added interface 2679 to host 13138
+2025-08-26 11:22:00,578 - INFO - Successfully added interface 2680 to host 13139
+2025-08-26 11:22:00,598 - INFO - Successfully added interface 2681 to host 13140
+2025-08-26 11:22:00,619 - INFO - Successfully added interface 2682 to host 13141
+2025-08-26 11:22:00,639 - INFO - Successfully added interface 2683 to host 13142
+2025-08-26 11:22:00,659 - INFO - Successfully added interface 2684 to host 13143
+2025-08-26 11:22:00,679 - INFO - Successfully added interface 2685 to host 13144
+2025-08-26 11:22:00,698 - INFO - Successfully added interface 2686 to host 13145
+2025-08-26 11:22:00,718 - INFO - Successfully added interface 2687 to host 13146
+2025-08-26 11:22:00,738 - INFO - Successfully added interface 2688 to host 13147
+2025-08-26 11:22:00,758 - INFO - Successfully added interface 2689 to host 13148
+2025-08-26 11:22:00,778 - INFO - Successfully added interface 2690 to host 13149
+2025-08-26 11:22:00,798 - INFO - Successfully added interface 2691 to host 13150
+2025-08-26 11:22:00,818 - INFO - Successfully added interface 2692 to host 13151
+2025-08-26 11:22:00,820 - INFO - 192.168.55.9 - - [26/Aug/2025 11:22:00] "POST /api/mass_update_interfaces HTTP/1.1" 200 -
+2025-08-26 11:22:13,629 - INFO - 192.168.55.9 - - [26/Aug/2025 11:22:13] "POST /api/mass_update_interfaces HTTP/1.1" 200 -
+2025-08-26 11:23:11,487 - INFO - 192.168.55.9 - - [26/Aug/2025 11:23:11] "POST /api/mass_update_interfaces HTTP/1.1" 200 -
+2025-08-26 11:23:30,167 - INFO - 192.168.55.9 - - [26/Aug/2025 11:23:30] "POST /api/mass_update_interfaces HTTP/1.1" 200 -
+2025-08-26 11:23:57,181 - INFO - 192.168.55.9 - - [26/Aug/2025 11:23:57] "GET /api/groups HTTP/1.1" 200 -
+2025-08-26 11:24:17,639 - INFO - 192.168.55.9 - - [26/Aug/2025 11:24:17] "GET /api/groups HTTP/1.1" 200 -
+2025-08-26 11:24:25,971 - INFO - 192.168.55.9 - - [26/Aug/2025 11:24:25] "GET /api/groups HTTP/1.1" 200 -
